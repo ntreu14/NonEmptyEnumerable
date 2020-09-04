@@ -15,7 +15,7 @@ namespace NonEmptyEnumerable
       _head = head ?? throw new ArgumentNullException(nameof(head));
       _tail = tail ?? throw new ArgumentNullException(nameof(tail));
     }
-
+    
     public static NonEmptyEnumerable<T> Singleton(T head) =>
       new NonEmptyEnumerable<T>(head, Enumerable.Empty<T>());
 
@@ -44,12 +44,14 @@ namespace NonEmptyEnumerable
       var headResult = f(_head);
       var a = headResult.Head();
       var firstTail = headResult.Tail();
-
       var secondTail = _tail.SelectMany(t => f(t).ToList());
 
       return new NonEmptyEnumerable<TResult>(a, firstTail.Concat(secondTail));
     }
-    
+
+    public NonEmptyEnumerable<T> Concat(NonEmptyEnumerable<T> enumerable) =>
+      new NonEmptyEnumerable<T>(_head, _tail.Concat(enumerable.ToList()));
+
     public IEnumerator<T> GetEnumerator() =>
       new [] { _head }.Concat(_tail).GetEnumerator();
 

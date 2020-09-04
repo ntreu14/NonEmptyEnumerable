@@ -16,7 +16,7 @@ module Specs =
         testList "Constructing an NonEmptyEnumerable" [
           
           testCase "with both arguments as null" <| fun _ ->
-            throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(null, null) |> ignore) "throws an exception"
+            throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(null, null) |> ignore) "throws an ArgumentNullException"
 
           testProperty "with only the first argument null" <| fun (enumerable: obj list) ->
             let tail = enumerable :> IEnumerable<obj>
@@ -50,7 +50,7 @@ module Specs =
 
         testProperty "Tail" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
-          Expect.equal (Array.ofSeq <| xs.Tail ()) (Array.tail arr) "the tails are equal"
+          Expect.sequenceEqual (Array.ofSeq <| xs.Tail ()) (Array.tail arr) "the tails are equal"
         
         testProperty "Select" <| fun (NonEmptyArray (enumerable : int [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable enumerable
@@ -59,22 +59,23 @@ module Specs =
           let mappedArray = Array.map add1 enumerable
           let mappedNonEmptyList = xs.Select add1
 
-          Expect.equal (Array.ofSeq <| mappedNonEmptyList.ToList ()) mappedArray "the mapped lists are the same"
+          Expect.sequenceEqual (mappedNonEmptyList.ToArray ()) mappedArray "the mapped arrays are the same"
 
         testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt [])) ->
-          let justInts = Array.map (function PositiveInt i -> i) enumerable
+          let justInts = enumerable |> Array.map (function PositiveInt i -> i)
           
           let xs = NonEmptyEnumerable.FromEnumerable justInts
           let toManyInts n = [|0..n|] |> NonEmptyEnumerable.FromEnumerable
 
-          let mappedArray = justInts |> Array.collect (Array.ofSeq << toManyInts)
-          let mappedNonEmptyList = xs.SelectMany toManyInts
+          let collectedArray = justInts |> Array.collect (Array.ofSeq << toManyInts)
+          let collectedNonEmptyList = xs.SelectMany toManyInts
 
-          Expect.equal (Array.ofSeq <| mappedNonEmptyList.ToList ()) mappedArray "the collected lists are the same"
-      
-        testProperty "Count" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+          Expect.sequenceEqual (collectedNonEmptyList.ToArray ()) collectedArray "the collected arrays are the same"
+
+        testProperty "Concat" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
+          let appended = Array.append arr arr
+          let nonEmptyConcated = xs.Concat xs
 
-          Expect.equal (xs.Count) (Array.length arr) "the counts are equal"
+          Expect.sequenceEqual (nonEmptyConcated.ToArray ()) appended "the concated arrays are equal"
       ]
-
