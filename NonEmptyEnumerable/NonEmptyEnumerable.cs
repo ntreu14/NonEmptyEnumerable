@@ -44,13 +44,13 @@ namespace NonEmptyEnumerable
       var headResult = f(_head);
       var a = headResult.Head();
       var firstTail = headResult.Tail();
-      var secondTail = _tail.SelectMany(t => f(t).ToList());
+      var secondTail = _tail.SelectMany(f);
 
       return new NonEmptyEnumerable<TResult>(a, firstTail.Concat(secondTail));
     }
 
     public NonEmptyEnumerable<T> Concat(NonEmptyEnumerable<T> enumerable) =>
-      new NonEmptyEnumerable<T>(_head, _tail.Concat(enumerable.ToList()));
+      new NonEmptyEnumerable<T>(_head, _tail.Concat(enumerable));
 
     public IEnumerator<T> GetEnumerator() =>
       new [] { _head }.Concat(_tail).GetEnumerator();
