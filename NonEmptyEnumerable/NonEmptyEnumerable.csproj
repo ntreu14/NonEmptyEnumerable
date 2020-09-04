@@ -4,6 +4,22 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <Authors>Nicholas Treu</Authors>
+    <Product />
+    <Company />
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ntreu14/NonEmptyEnumerable</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+    <Description>A simple NonEmptyEnumerable type for .NET</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

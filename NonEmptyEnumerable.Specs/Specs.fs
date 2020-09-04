@@ -9,10 +9,8 @@ module Specs =
   open FsCheck
   open NonEmptyEnumerable
 
-  let private (|+) head tail = NonEmptyEnumerable (head, tail)
-
   [<Tests>]
-  let specs : Test = 
+  let specs: Test =
     testList "NonEmptyEnumerable specs" 
       [
         testList "Constructing an NonEmptyEnumerable" [
@@ -26,13 +24,11 @@ module Specs =
                
           testProperty "with only the second argument null" <| fun head ->
             throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(head, null) |> ignore) "throws an ArgumentNullException"
-
           
           testProperty "Singleton" <| fun (NonNull head) ->
-
             let singleton = NonEmptyEnumerable.Singleton head
             
-            Expect.equal head (singleton.Head ()) "the head is equal to the head used to create it"
+            Expect.equal (singleton.Head ()) head "the head is equal to the head used to create it"
             Expect.isEmpty (singleton.Tail ()) "the tail is empty on a singleton"
 
           testProperty "FromEnumerable not empty" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
@@ -50,12 +46,11 @@ module Specs =
 
         testProperty "Head" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
-          Expect.equal (Array.head arr) (xs.Head ()) "the heads are equal"
+          Expect.equal (xs.Head ()) (Array.head arr) "the heads are equal"
 
         testProperty "Tail" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
-          Expect.equal (Array.tail arr) (Array.ofSeq <| xs.Tail ()) "the tails are equal"
-
+          Expect.equal (Array.ofSeq <| xs.Tail ()) (Array.tail arr) "the tails are equal"
         
         testProperty "Select" <| fun (NonEmptyArray (enumerable : int [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable enumerable
@@ -64,7 +59,7 @@ module Specs =
           let mappedArray = Array.map add1 enumerable
           let mappedNonEmptyList = xs.Select add1
 
-          Expect.equal mappedArray (Array.ofSeq <| mappedNonEmptyList.ToList ()) "the mapped lists are the same"
+          Expect.equal (Array.ofSeq <| mappedNonEmptyList.ToList ()) mappedArray "the mapped lists are the same"
 
         testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt [])) ->
           let justInts = Array.map (function PositiveInt i -> i) enumerable
@@ -75,6 +70,11 @@ module Specs =
           let mappedArray = justInts |> Array.collect (Array.ofSeq << toManyInts)
           let mappedNonEmptyList = xs.SelectMany toManyInts
 
-          Expect.equal mappedArray (Array.ofSeq <| mappedNonEmptyList.ToList ()) "the collected lists are the same"
+          Expect.equal (Array.ofSeq <| mappedNonEmptyList.ToList ()) mappedArray "the collected lists are the same"
+      
+        testProperty "Count" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+          let xs = NonEmptyEnumerable.FromEnumerable arr
+
+          Expect.equal (xs.Count) (Array.length arr) "the counts are equal"
       ]
 
