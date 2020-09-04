@@ -1,1 +1,1 @@
-A simple NonEmptyEnumerable data structure for .Net
+A simple `NonEmptyEnumerable` data structure for C#
