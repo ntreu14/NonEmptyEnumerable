@@ -57,9 +57,9 @@ module Specs =
           let add1 = (+) 1
 
           let mappedArray = Array.map add1 enumerable
-          let mappedNonEmptyList = xs.Select add1
+          let mappedNonEmptyArray = xs.Select add1
 
-          Expect.sequenceEqual (mappedNonEmptyList.ToArray ()) mappedArray "the mapped arrays are the same"
+          Expect.sequenceEqual (mappedNonEmptyArray.ToArray ()) mappedArray "the mapped arrays are the same"
 
         testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt [])) ->
           let justInts = enumerable |> Array.map (function PositiveInt i -> i)
