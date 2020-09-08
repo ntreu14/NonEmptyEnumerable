@@ -25,6 +25,9 @@ module Specs =
           testProperty "with only the second argument null" <| fun head ->
             throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(head, null) |> ignore) "throws an ArgumentNullException"
           
+          testCase "Singleton with null" <| fun _ ->
+            throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable.Singleton null |> ignore) "throws an ArgumentNullException"
+
           testProperty "Singleton" <| fun (NonNull head) ->
             let singleton = NonEmptyEnumerable.Singleton head
             
@@ -40,7 +43,7 @@ module Specs =
           testCase "FromEnumerable with null" <| fun _ -> 
              throwsT<ArgumentException> (fun () -> NonEmptyEnumerable.FromEnumerable null |> ignore) "throws an ArgumentException"
 
-          testCase "FromEnumerable with Empty" <| fun _ -> 
+          testCase "FromEnumerable with an empty enumerable" <| fun _ -> 
             throwsT<ArgumentException> (fun () -> NonEmptyEnumerable.FromEnumerable (Enumerable.Empty<obj> ()) |> ignore) "throws an ArgumentException"  
         ]
 
