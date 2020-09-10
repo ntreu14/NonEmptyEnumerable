@@ -67,7 +67,7 @@ module Specs =
           let xs = NonEmptyEnumerable.FromEnumerable justInts
           let toManyInts n = [|0..n|] |> NonEmptyEnumerable.FromEnumerable
 
-          let collectedArray = justInts |> Array.collect (Array.ofSeq << toManyInts)
+          let collectedArray = justInts |> Array.collect (fun n -> [|0..n|])
           let collectedNonEmptyList = xs.SelectMany toManyInts
 
           Expect.sequenceEqual (collectedNonEmptyList.ToArray ()) collectedArray "the collected arrays are the same"
