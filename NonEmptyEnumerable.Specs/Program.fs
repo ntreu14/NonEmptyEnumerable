@@ -9,4 +9,4 @@ module Main =
 
   [<EntryPoint>]
   let main argv =
-    specs |> runTestsWithArgs testConfig argv 
+    specs |> runTestsWithArgs testConfig argv
