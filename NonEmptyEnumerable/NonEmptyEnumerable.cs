@@ -16,8 +16,7 @@ namespace NonEmptyEnumerable
       _tail = tail ?? throw new ArgumentNullException(nameof(tail));
     }
     
-    public static NonEmptyEnumerable<T> Singleton(T head) =>
-      new NonEmptyEnumerable<T>(head, Enumerable.Empty<T>());
+    public static NonEmptyEnumerable<T> Singleton(T head) => new NonEmptyEnumerable<T>(head, Enumerable.Empty<T>());
 
     public static NonEmptyEnumerable<T> FromEnumerable(IEnumerable<T> enumerable)
     {
@@ -42,18 +41,20 @@ namespace NonEmptyEnumerable
     public NonEmptyEnumerable<TResult> SelectMany<TResult>(Func<T, NonEmptyEnumerable<TResult>> f) where TResult : notnull
     {
       var headResult = f(_head);
-      var a = headResult.Head();
+      var newHead = headResult.Head();
       var firstTail = headResult.Tail();
       var secondTail = _tail.SelectMany(f);
 
-      return new NonEmptyEnumerable<TResult>(a, firstTail.Concat(secondTail));
+      return new NonEmptyEnumerable<TResult>(newHead, firstTail.Concat(secondTail));
     }
 
     public NonEmptyEnumerable<T> Concat(NonEmptyEnumerable<T> enumerable) =>
       new NonEmptyEnumerable<T>(_head, _tail.Concat(enumerable));
 
-    public IEnumerator<T> GetEnumerator() =>
-      new [] { _head }.Concat(_tail).GetEnumerator();
+    public NonEmptyEnumerable<T> Cons(T newHead) =>
+      new NonEmptyEnumerable<T>(newHead, new [] { _head }.Concat(_tail));
+
+    public IEnumerator<T> GetEnumerator() => new [] { _head }.Concat(_tail).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

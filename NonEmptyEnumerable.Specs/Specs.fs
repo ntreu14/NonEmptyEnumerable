@@ -53,7 +53,7 @@ module Specs =
 
         testProperty "Tail" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
-          Expect.sequenceEqual (Array.ofSeq <| xs.Tail ()) (Array.tail arr) "the tails are equal"
+          Expect.sequenceEqual (xs.Tail ()) (Array.tail arr) "the tails are equal"
         
         testProperty "Select" <| fun (NonEmptyArray (enumerable : int [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable enumerable
@@ -62,7 +62,7 @@ module Specs =
           let mappedArray = Array.map add1 enumerable
           let mappedNonEmptyArray = xs.Select add1
 
-          Expect.sequenceEqual (mappedNonEmptyArray.ToArray ()) mappedArray "the mapped arrays are the same"
+          Expect.sequenceEqual mappedNonEmptyArray mappedArray "the mapped arrays are the same"
 
         testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt [])) ->
           let justInts = enumerable |> Array.map (function PositiveInt i -> i)
@@ -73,12 +73,19 @@ module Specs =
           let collectedArray = justInts |> Array.collect (fun n -> [|0..n|])
           let collectedNonEmptyList = xs.SelectMany toManyInts
 
-          Expect.sequenceEqual (collectedNonEmptyList.ToArray ()) collectedArray "the collected arrays are the same"
+          Expect.sequenceEqual collectedNonEmptyList collectedArray "the collected arrays are the same"
 
         testProperty "Concat" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
           let appended = Array.append arr arr
           let nonEmptyConcated = xs.Concat xs
 
-          Expect.sequenceEqual (nonEmptyConcated.ToArray ()) appended "the concated arrays are equal"
+          Expect.sequenceEqual nonEmptyConcated appended "the concated arrays are equal"
+
+        testProperty "Cons" <| fun ((head: obj NonNull), NonEmptyArray (enumerable: obj NonNull [])) ->
+          let xs = NonEmptyEnumerable.FromEnumerable enumerable
+          let cons = xs.Cons head
+          let expected = Array.append [| head |] enumerable
+
+          Expect.sequenceEqual cons expected "the cons arrays are equal"
       ]
