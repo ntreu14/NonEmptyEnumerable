@@ -52,18 +52,24 @@ namespace NonEmptyEnumerable
       new NonEmptyEnumerable<T>(_head, _tail.Concat(enumerable));
 
     public NonEmptyEnumerable<T> Cons(T newHead) =>
-      new NonEmptyEnumerable<T>(newHead, new [] { _head }.Concat(_tail));
+      new NonEmptyEnumerable<T>(newHead, AsEnumerable());
 
     public NonEmptyEnumerable<T> Reverse()
     {
-      var reversed = new[] { _head }.Concat(_tail).Reverse();
+      var reversed = AsEnumerable().Reverse();
       var head = reversed.First();
       var tail = reversed.Skip(1);
 
       return new NonEmptyEnumerable<T>(head, tail);
     }
 
-    public IEnumerator<T> GetEnumerator() => new [] { _head }.Concat(_tail).GetEnumerator();
+    public NonEmptyEnumerable<T> SortBy<TKey>(Func<T, TKey> keySelector) => 
+      FromEnumerable(AsEnumerable().OrderBy(keySelector));
+
+    public NonEmptyEnumerable<T> SortByDescending<TKey>(Func<T, TKey> keySelector) =>
+      FromEnumerable(AsEnumerable().OrderByDescending(keySelector));
+
+    public IEnumerator<T> GetEnumerator() => AsEnumerable().GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -84,8 +90,10 @@ namespace NonEmptyEnumerable
     {
       unchecked
       {
-        return (EqualityComparer<T>.Default.GetHashCode(_head) * 397) ^ (_tail != null ? _tail.GetHashCode() : 0);
+        return (EqualityComparer<T>.Default.GetHashCode(_head) * 397) ^ _tail.GetHashCode();
       }
     }
+
+    private IEnumerable<T> AsEnumerable() => new[] { _head }.Concat(_tail);
   }
 }

@@ -62,7 +62,7 @@ module Specs =
           let mappedArray = Array.map add1 enumerable
           let mappedNonEmptyArray = xs.Select add1
 
-          Expect.sequenceEqual mappedNonEmptyArray mappedArray "the mapped arrays are the same"
+          Expect.sequenceEqual mappedNonEmptyArray mappedArray "the mapped enumerables are the same"
 
         testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt [])) ->
           let justInts = enumerable |> Array.map (function PositiveInt i -> i)
@@ -73,26 +73,40 @@ module Specs =
           let collectedArray = justInts |> Array.collect (fun n -> [|0..n|])
           let collectedNonEmptyList = xs.SelectMany toManyInts
 
-          Expect.sequenceEqual collectedNonEmptyList collectedArray "the collected arrays are the same"
+          Expect.sequenceEqual collectedNonEmptyList collectedArray "the collected enumerables are the same"
 
         testProperty "Concat" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
           let appended = Array.append arr arr
           let nonEmptyConcated = xs.Concat xs
 
-          Expect.sequenceEqual nonEmptyConcated appended "the concated arrays are equal"
+          Expect.sequenceEqual nonEmptyConcated appended "the concated enumerables are equal"
 
         testProperty "Cons" <| fun ((head: obj NonNull), NonEmptyArray (enumerable: obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable enumerable
           let cons = xs.Cons head
           let expected = Array.append [| head |] enumerable
 
-          Expect.sequenceEqual cons expected "the cons arrays are equal"
+          Expect.sequenceEqual cons expected "the cons enumerables are equal"
 
         testProperty "Reverse" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
           let reversed = Array.rev arr
           let expected = xs.Reverse ()
 
-          Expect.sequenceEqual reversed expected "the reversed arrays are equal"
+          Expect.sequenceEqual reversed expected "the reversed enumerables are equal"
+
+        testProperty "SortBy" <| fun (NonEmptyArray (arr : int [])) ->
+          let xs = NonEmptyEnumerable.FromEnumerable arr
+          let sorted = Array.sort arr
+          let expected = xs.SortBy (fun i -> i)
+
+          Expect.sequenceEqual sorted expected "the sorted enumerables are equal"
+
+        testProperty "SortByDecending" <| fun (NonEmptyArray (arr : int [])) ->
+          let xs = NonEmptyEnumerable.FromEnumerable arr
+          let sorted = Array.sortDescending arr
+          let expected = xs.SortByDescending (fun i -> i)
+
+          Expect.sequenceEqual sorted expected "the sorted enumerables are equal"
       ]
