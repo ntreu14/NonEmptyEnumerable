@@ -75,6 +75,9 @@ namespace NonEmptyEnumerable
       return (lookup[true], lookup[false]);
     }
 
+    public NonEmptyEnumerable<T> Intersperse(T value) =>
+      FromEnumerable(AsEnumerable().SelectMany(x => new [] { value, x }));
+
     public IEnumerator<T> GetEnumerator() => AsEnumerable().GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
