@@ -37,8 +37,8 @@ module Specs =
           testProperty "FromEnumerable not empty" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
             let xs = NonEmptyEnumerable.FromEnumerable arr
 
-            Expect.equal (Array.head arr) (xs.Head ()) "the heads are equal"
-            Expect.sequenceEqual (Array.tail arr) (xs.Tail ()) "the tails are equal"
+            Expect.equal (xs.Head ()) (Array.head arr) "the heads are equal"
+            Expect.sequenceEqual (xs.Tail ()) (Array.tail arr) "the tails are equal"
 
           testCase "FromEnumerable with null" <| fun _ -> 
              throwsT<ArgumentException> (fun () -> NonEmptyEnumerable.FromEnumerable null |> ignore) "throws an ArgumentException"
@@ -109,4 +109,27 @@ module Specs =
           let expected = xs.SortByDescending (fun i -> i)
 
           Expect.sequenceEqual sorted expected "the sorted enumerables are equal"
+
+        testList "Partition" [
+          testProperty "Partition all true" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+            let enumerable = NonEmptyEnumerable.FromEnumerable arr
+            let struct (whenTrue, whenFalse) = enumerable.Partition (fun _ -> true)
+
+            Expect.isEmpty whenFalse "the whenFalse is empty"
+            Expect.sequenceEqual whenTrue enumerable "the whenTrue and original enumerable are the same"
+
+          testProperty "Partition all false" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+            let enumerable = NonEmptyEnumerable.FromEnumerable arr
+            let struct (whenTrue, whenFalse) = enumerable.Partition (fun _ -> false)
+
+            Expect.isEmpty whenTrue "the whenTrue is empty"
+            Expect.sequenceEqual whenFalse enumerable "the whenFalse and original enumerable are the same"
+
+          testCase "Partition" <| fun _ ->
+            let enumerable = NonEmptyEnumerable.FromEnumerable [0..10]
+            let struct (lessThan5, fiveAndGreater) = enumerable.Partition (fun i -> i < 5)
+        
+            Expect.sequenceEqual lessThan5 [0..4] ""
+            Expect.sequenceEqual fiveAndGreater [5..10] ""
+        ]
       ]

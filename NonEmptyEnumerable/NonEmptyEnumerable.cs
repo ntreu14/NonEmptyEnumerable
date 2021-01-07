@@ -69,6 +69,12 @@ namespace NonEmptyEnumerable
     public NonEmptyEnumerable<T> SortByDescending<TKey>(Func<T, TKey> keySelector) =>
       FromEnumerable(AsEnumerable().OrderByDescending(keySelector));
 
+    public (IEnumerable<T> whenTrue, IEnumerable<T> whenFalse) Partition(Func<T, bool> predicate)
+    {
+      var lookup = AsEnumerable().ToLookup(predicate);
+      return (lookup[true], lookup[false]);
+    }
+
     public IEnumerator<T> GetEnumerator() => AsEnumerable().GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
