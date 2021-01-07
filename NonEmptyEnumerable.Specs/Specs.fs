@@ -133,11 +133,11 @@ module Specs =
             Expect.sequenceEqual fiveAndGreater [5..10] ""
         ]
 
-        testProperty "Intersperse" <| fun (NonEmptyArray (arr : string NonNull [])) ->
-          let a = Array.map (function (NonNull s) -> s) arr
-          let enumerable = NonEmptyEnumerable.FromEnumerable a
-          let intersperseFoo = enumerable.Intersperse "foo"
-          let expected = Array.collect (fun s -> [|"foo"; s|]) a
+        testProperty "Intersperse" <| fun ((NonNull (v: obj)), NonEmptyArray (enumerable: obj NonNull [])) ->
+          let objs = Array.map (function (NonNull x) -> x) enumerable
+          let nee = NonEmptyEnumerable.FromEnumerable objs
+          let interspersed = nee.Intersperse v
+          let expected = Array.collect (fun s -> [|v; s|]) objs
 
-          Expect.sequenceEqual intersperseFoo expected "the interspearsed enumerables are equal"
+          Expect.sequenceEqual interspersed expected "the interspearsed enumerables are equal"
       ]
