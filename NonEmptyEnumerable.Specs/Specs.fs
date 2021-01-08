@@ -21,7 +21,7 @@ module Specs =
           let tail = enumerable :> IEnumerable<obj>
           throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(null, tail) |> ignore) "throws an ArgumentNullException"
                
-        testProperty "with only the second argument null" <| fun head ->
+        testProperty "with only the second argument null" <| fun (NonNull head) ->
           throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(head, null) |> ignore) "throws an ArgumentNullException"
           
         testCase "Singleton with null" <| fun _ ->
