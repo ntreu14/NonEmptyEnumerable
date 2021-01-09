@@ -94,5 +94,5 @@ module Specs =
           let reversed = Array.rev arr
           let expected = xs.Reverse ()
 
-          Expect.sequenceEqual reversed expected "the concated arrays are equal"
+          Expect.sequenceEqual reversed expected "the reversed arrays are equal"
       ]
