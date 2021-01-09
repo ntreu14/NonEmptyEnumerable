@@ -54,6 +54,15 @@ namespace NonEmptyEnumerable
     public NonEmptyEnumerable<T> Cons(T newHead) =>
       new NonEmptyEnumerable<T>(newHead, new [] { _head }.Concat(_tail));
 
+    public NonEmptyEnumerable<T> Reverse()
+    {
+      var reversed = new[] { _head }.Concat(_tail).Reverse();
+      var head = reversed.First();
+      var tail = reversed.Skip(1);
+
+      return new NonEmptyEnumerable<T>(head, tail);
+    }
+
     public IEnumerator<T> GetEnumerator() => new [] { _head }.Concat(_tail).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

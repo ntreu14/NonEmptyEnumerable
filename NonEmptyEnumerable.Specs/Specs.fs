@@ -88,4 +88,11 @@ module Specs =
           let expected = Array.append [| head |] enumerable
 
           Expect.sequenceEqual cons expected "the cons arrays are equal"
+
+        testProperty "Reverse" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+          let xs = NonEmptyEnumerable.FromEnumerable arr
+          let reversed = Array.rev arr
+          let expected = xs.Reverse ()
+
+          Expect.sequenceEqual reversed expected "the concated arrays are equal"
       ]
