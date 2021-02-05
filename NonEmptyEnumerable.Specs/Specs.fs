@@ -139,4 +139,11 @@ module Specs =
         let expected = Array.collect (fun s -> [|v; s|]) objs
 
         Expect.sequenceEqual interspersed expected "the interspearsed enumerables are equal"
+
+      testProperty "Scan" <| fun (NonEmptyArray (arr : int [])) ->
+        let nee = NonEmptyEnumerable.FromEnumerable arr
+        let scaned = nee.Scan(0, fun a b -> a + b)
+        let expected = Array.scan (+) 0 arr
+
+        Expect.sequenceEqual scaned expected "the scaned enumerables are equal"
     ]
