@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <Authors>Nicholas Treu</Authors>
@@ -11,8 +11,9 @@
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/ntreu14/NonEmptyEnumerable</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+    <PackageReleaseNotes>Implement new methods on NonEmptyEnumerable.</PackageReleaseNotes>
     <Description>A simple NonEmptyEnumerable type for .NET</Description>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
