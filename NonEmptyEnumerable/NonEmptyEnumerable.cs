@@ -78,6 +78,21 @@ namespace NonEmptyEnumerable
     public NonEmptyEnumerable<T> Intersperse(T value) =>
       FromEnumerable(AsEnumerable().SelectMany(x => new [] { value, x }));
 
+    public NonEmptyEnumerable<TState> Scan<TState>(TState state, Func<TState, T, TState> folder) where TState : notnull
+    {
+      var currentState = state;
+      var accumulatingStates = new List<TState> { state };
+
+      foreach (var element in AsEnumerable())
+      {
+        var nextState = folder(currentState, element);
+        accumulatingStates.Add(nextState);
+        currentState = nextState;
+      }
+
+      return new NonEmptyEnumerable<TState>(accumulatingStates.First(), accumulatingStates.Skip(1));
+    }
+
     public IEnumerator<T> GetEnumerator() => AsEnumerable().GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
