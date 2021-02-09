@@ -54,14 +54,8 @@ namespace NonEmptyEnumerable
     public NonEmptyEnumerable<T> Cons(T newHead) =>
       new NonEmptyEnumerable<T>(newHead, AsEnumerable());
 
-    public NonEmptyEnumerable<T> Reverse()
-    {
-      var reversed = AsEnumerable().Reverse();
-      var head = reversed.First();
-      var tail = reversed.Skip(1);
-
-      return new NonEmptyEnumerable<T>(head, tail);
-    }
+    public NonEmptyEnumerable<T> Reverse() =>
+      FromEnumerable(AsEnumerable().Reverse());
 
     public NonEmptyEnumerable<T> SortBy<TKey>(Func<T, TKey> keySelector) => 
       FromEnumerable(AsEnumerable().OrderBy(keySelector));
