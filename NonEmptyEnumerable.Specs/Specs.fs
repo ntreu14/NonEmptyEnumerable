@@ -9,6 +9,8 @@ module Specs =
   open FsCheck
   open NonEmptyEnumerable
 
+  let fromNonNullToObjs = Array.map (function NonNull x -> x)
+
   [<Tests>]
   let specs: Test =
     testList "NonEmptyEnumerable specs" [
@@ -64,7 +66,7 @@ module Specs =
         Expect.sequenceEqual mappedNonEmptyArray mappedArray "the mapped enumerables are the same"
 
       testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt [])) ->
-        let justInts = enumerable |> Array.map (function PositiveInt i -> i)
+        let justInts = Array.map (function PositiveInt i -> i) enumerable
           
         let xs = NonEmptyEnumerable.FromEnumerable justInts
         let toManyInts n = [|0..n|] |> NonEmptyEnumerable.FromEnumerable
@@ -133,7 +135,7 @@ module Specs =
       ]
 
       testProperty "Intersperse" <| fun ((NonNull (v: obj)), NonEmptyArray (enumerable: obj NonNull [])) ->
-        let objs = Array.map (function (NonNull x) -> x) enumerable
+        let objs = fromNonNullToObjs enumerable
         let nee = NonEmptyEnumerable.FromEnumerable objs
         let interspersed = nee.Intersperse v
         let expected = Array.collect (fun s -> [|v; s|]) objs
@@ -146,4 +148,24 @@ module Specs =
         let expected = Array.scan (+) 0 arr
 
         Expect.sequenceEqual scaned expected "the scaned enumerables are equal"
+
+      testList "Equality tests" [
+        testProperty "equality" <| fun (NonEmptyArray (enumerable: obj NonNull [])) ->
+          let first = NonEmptyEnumerable.FromEnumerable <| fromNonNullToObjs enumerable
+          let second = NonEmptyEnumerable.FromEnumerable <| fromNonNullToObjs enumerable
+
+          Expect.isTrue (first = second) "two NonEmptyEnumerbales are equal with the same values"
+          Expect.isTrue (first.Equals second) "two NonEmptyEnumerbales are equal with the same values"
+          Expect.isFalse (first <> second) "two NonEmptyEnumerbales are not, not equal with the same values"
+          Expect.equal first second "two NonEmptyEnumerbales are equal with the same values"
+
+        testProperty "inequality" <| fun (NonEmptyArray (enumerable1: obj NonNull []), NonEmptyArray (enumerable2: obj NonNull [])) ->
+          let first = NonEmptyEnumerable.FromEnumerable <| fromNonNullToObjs enumerable1
+          let second = NonEmptyEnumerable.FromEnumerable <| fromNonNullToObjs enumerable2
+
+          Expect.isTrue (first <> second) "two NonEmptyEnumerbales are not equal with different values"
+          Expect.isFalse (first.Equals second) "two NonEmptyEnumerbales are not equal with different values"
+          Expect.isFalse (first = second) "two NonEmptyEnumerbales are not equal with different values"
+          Expect.notEqual first second "two NonEmptyEnumerbales are not equal with different values"
+      ]
     ]
