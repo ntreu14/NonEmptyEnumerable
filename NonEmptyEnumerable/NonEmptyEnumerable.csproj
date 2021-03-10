@@ -11,9 +11,9 @@
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/ntreu14/NonEmptyEnumerable</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Upgrade to net 5.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Implement IEquatable&lt;T&gt; for NonEmptyEnumerable.</PackageReleaseNotes>
     <Description>A simple NonEmptyEnumerable type for .NET</Description>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
