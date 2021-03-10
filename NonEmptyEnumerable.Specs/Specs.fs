@@ -12,7 +12,7 @@ let fromNonNullToObjs = Array.map (function NonNull x -> x)
 let nonEmptyFromNonNullObjs = NonEmptyEnumerable.FromEnumerable << fromNonNullToObjs
 
 [<Tests>]
-let specs: Test =
+let specs : Test =
   testList "NonEmptyEnumerable specs" [
     testList "Constructing an NonEmptyEnumerable" [
           

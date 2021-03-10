@@ -1,10 +1,11 @@
 ﻿module Main 
-open Expecto
-open Specs
 
-let testConfig = 
-  { defaultConfig with runInParallel=true; verbosity=Logging.LogLevel.Verbose }
+open Expecto
 
 [<EntryPoint>]
-let main argv =
-  specs |> runTestsWithArgs testConfig argv
+let main =
+  runTestsInAssemblyWithCLIArgs
+    [ FsCheck_Max_Tests 1000
+      Parallel
+      Verbosity Logging.LogLevel.Verbose
+    ]
