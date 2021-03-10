@@ -10,6 +10,7 @@ module Specs =
   open NonEmptyEnumerable
 
   let fromNonNullToObjs = Array.map (function NonNull x -> x)
+  let nonEmptyFromNonNullObjs = NonEmptyEnumerable.FromEnumerable << fromNonNullToObjs
 
   [<Tests>]
   let specs: Test =
@@ -151,8 +152,8 @@ module Specs =
 
       testList "Equality tests" [
         testProperty "equality" <| fun (NonEmptyArray (enumerable: obj NonNull [])) ->
-          let first = NonEmptyEnumerable.FromEnumerable <| fromNonNullToObjs enumerable
-          let second = NonEmptyEnumerable.FromEnumerable <| fromNonNullToObjs enumerable
+          let first = nonEmptyFromNonNullObjs enumerable
+          let second = nonEmptyFromNonNullObjs enumerable
 
           Expect.isTrue (first = second) "two NonEmptyEnumerbales are equal with the same values"
           Expect.isTrue (first.Equals second) "two NonEmptyEnumerbales are equal with the same values"
@@ -160,12 +161,17 @@ module Specs =
           Expect.equal first second "two NonEmptyEnumerbales are equal with the same values"
 
         testProperty "inequality" <| fun (NonEmptyArray (enumerable1: obj NonNull []), NonEmptyArray (enumerable2: obj NonNull [])) ->
-          let first = NonEmptyEnumerable.FromEnumerable <| fromNonNullToObjs enumerable1
-          let second = NonEmptyEnumerable.FromEnumerable <| fromNonNullToObjs enumerable2
+          let first = nonEmptyFromNonNullObjs enumerable1
+          let second = nonEmptyFromNonNullObjs enumerable2
 
           Expect.isTrue (first <> second) "two NonEmptyEnumerbales are not equal with different values"
           Expect.isFalse (first.Equals second) "two NonEmptyEnumerbales are not equal with different values"
           Expect.isFalse (first = second) "two NonEmptyEnumerbales are not equal with different values"
           Expect.notEqual first second "two NonEmptyEnumerbales are not equal with different values"
+
+        testProperty "equality with null" <| fun (NonEmptyArray (enumerable: obj NonNull [])) ->
+          let xs = nonEmptyFromNonNullObjs enumerable
+          Expect.isFalse (xs.Equals null) "a NonEmptyEnumerable never equals null"
+          Expect.notEqual xs null "a NonEmptyEnumerable never equals null"
       ]
     ]
