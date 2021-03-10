@@ -146,4 +146,26 @@ module Specs =
         let expected = Array.scan (+) 0 arr
 
         Expect.sequenceEqual scaned expected "the scaned enumerables are equal"
+
+      testList "Equality tests" [
+        testProperty "equality" <| fun (NonEmptyArray (enumerable: obj NonNull [])) ->
+          let justObjs = Array.map (function NonNull x -> x) enumerable
+          let first = NonEmptyEnumerable.FromEnumerable justObjs
+          let second = NonEmptyEnumerable.FromEnumerable justObjs
+
+          Expect.isTrue (first = second) "two NonEmptyEnumerbales are equal with the same values"
+          Expect.isTrue (first.Equals second) "two NonEmptyEnumerbales are equal with the same values"
+          Expect.isFalse (first <> second) "two NonEmptyEnumerbales are not, not equal with the same values"
+          Expect.equal first second "two NonEmptyEnumerbales are equal with the same values"
+
+        testProperty "inequality" <| fun (NonEmptyArray (enumerable1: obj NonNull []), NonEmptyArray (enumerable2: obj NonNull [])) ->
+          let toJustObjs = Array.map (function NonNull x -> x)
+          let first = NonEmptyEnumerable.FromEnumerable <| toJustObjs enumerable1
+          let second = NonEmptyEnumerable.FromEnumerable <| toJustObjs enumerable2
+
+          Expect.isTrue (first <> second) "two NonEmptyEnumerbales are not equal with different values"
+          Expect.isFalse (first.Equals second) "two NonEmptyEnumerbales are not equal with different values"
+          Expect.isFalse (first = second) "two NonEmptyEnumerbales are not equal with different values"
+          Expect.notEqual first second "two NonEmptyEnumerbales are not equal with different values"
+      ]
     ]

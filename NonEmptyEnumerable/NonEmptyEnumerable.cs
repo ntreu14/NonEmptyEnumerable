@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace NonEmptyEnumerable
 {
-  public class NonEmptyEnumerable<T> : IReadOnlyCollection<T>, IEnumerable<T> where T : notnull
+  public class NonEmptyEnumerable<T> : IReadOnlyCollection<T>, IEquatable<NonEmptyEnumerable<T>> where T : notnull
   {
     private readonly T _head;
     private readonly IEnumerable<T> _tail;
@@ -93,9 +93,24 @@ namespace NonEmptyEnumerable
 
     public int Count => _tail.Count() + 1;
 
-    protected bool Equals(NonEmptyEnumerable<T> other) =>
-      EqualityComparer<T>.Default.Equals(_head, other._head) && Equals(_tail, other._tail);
+    public static bool operator ==(NonEmptyEnumerable<T> first, NonEmptyEnumerable<T> second) =>
+      Equals(first, second);
 
+    public static bool operator !=(NonEmptyEnumerable<T> first, NonEmptyEnumerable<T> second) =>
+      !Equals(first, second);
+
+    public static bool Equals(NonEmptyEnumerable<T> first, NonEmptyEnumerable<T> second) =>
+      first.Equals(second);
+
+    public bool Equals(NonEmptyEnumerable<T>? other) =>
+      other switch
+      {
+        null => false,
+        _ => 
+          EqualityComparer<T>.Default.Equals(_head, other._head)
+             && _tail.SequenceEqual(other._tail)
+      };
+      
     public override bool Equals(object? obj)
     {
       if (ReferenceEquals(null, obj)) return false;
