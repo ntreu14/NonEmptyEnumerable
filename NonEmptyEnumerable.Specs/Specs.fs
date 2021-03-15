@@ -2,7 +2,6 @@
 
 open System
 open System.Linq
-open System.Collections.Generic
 open Expecto
 open Expect
 open FsCheck
@@ -19,8 +18,7 @@ let specs : Test =
       testCase "with both arguments as null" <| fun _ ->
         throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(null, null) |> ignore) "throws an ArgumentNullException"
 
-      testProperty "with only the first argument null" <| fun (enumerable: obj list) ->
-        let tail = enumerable :> IEnumerable<obj>
+      testProperty "with only the first argument null" <| fun (NonEmptyArray (tail: obj array)) ->
         throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(null, tail) |> ignore) "throws an ArgumentNullException"
                
       testProperty "with only the second argument null" <| fun (NonNull head) ->
@@ -35,7 +33,7 @@ let specs : Test =
         Expect.equal (singleton.Head ()) head "the head is equal to the head used to create it"
         Expect.isEmpty (singleton.Tail ()) "the tail is empty on a singleton"
 
-      testProperty "FromEnumerable not empty" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+      testProperty "FromEnumerable not empty" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
         let xs = NonEmptyEnumerable.FromEnumerable arr
 
         Expect.equal (xs.Head ()) (Array.head arr) "the heads are equal"
@@ -48,15 +46,15 @@ let specs : Test =
         throwsT<ArgumentException> (fun () -> NonEmptyEnumerable.FromEnumerable (Enumerable.Empty<obj> ()) |> ignore) "throws an ArgumentException"  
     ]
 
-    testProperty "Head" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+    testProperty "Head" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
       let xs = NonEmptyEnumerable.FromEnumerable arr
       Expect.equal (xs.Head ()) (Array.head arr) "the heads are equal"
 
-    testProperty "Tail" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+    testProperty "Tail" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
       let xs = NonEmptyEnumerable.FromEnumerable arr
       Expect.sequenceEqual (xs.Tail ()) (Array.tail arr) "the tails are equal"
         
-    testProperty "Select" <| fun (NonEmptyArray (enumerable : int [])) ->
+    testProperty "Select" <| fun (NonEmptyArray (enumerable : int array)) ->
       let xs = NonEmptyEnumerable.FromEnumerable enumerable
       let add1 = (+) 1
 
@@ -65,7 +63,7 @@ let specs : Test =
 
       Expect.sequenceEqual mappedNonEmptyArray mappedArray "the mapped enumerables are the same"
 
-    testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt [])) ->
+    testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt array)) ->
       let justInts = Array.map (function PositiveInt i -> i) enumerable
           
       let xs = NonEmptyEnumerable.FromEnumerable justInts
@@ -76,35 +74,35 @@ let specs : Test =
 
       Expect.sequenceEqual collectedNonEmptyList collectedArray "the collected enumerables are the same"
 
-    testProperty "Concat" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+    testProperty "Concat" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
       let xs = NonEmptyEnumerable.FromEnumerable arr
       let appended = Array.append arr arr
       let nonEmptyConcated = xs.Concat xs
 
       Expect.sequenceEqual nonEmptyConcated appended "the concated enumerables are equal"
 
-    testProperty "Cons" <| fun ((head: obj NonNull), NonEmptyArray (enumerable: obj NonNull [])) ->
+    testProperty "Cons" <| fun ((head: obj NonNull), NonEmptyArray (enumerable: obj NonNull array)) ->
       let xs = NonEmptyEnumerable.FromEnumerable enumerable
       let cons = xs.Cons head
       let expected = Array.append [| head |] enumerable
 
       Expect.sequenceEqual cons expected "the cons enumerables are equal"
 
-    testProperty "Reverse" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+    testProperty "Reverse" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
       let xs = NonEmptyEnumerable.FromEnumerable arr
       let reversed = Array.rev arr
       let expected = xs.Reverse ()
 
       Expect.sequenceEqual reversed expected "the reversed enumerables are equal"
 
-    testProperty "SortBy" <| fun (NonEmptyArray (arr : int [])) ->
+    testProperty "SortBy" <| fun (NonEmptyArray (arr : int array)) ->
       let xs = NonEmptyEnumerable.FromEnumerable arr
       let sorted = Array.sort arr
       let expected = xs.SortBy (fun i -> i)
 
       Expect.sequenceEqual sorted expected "the sorted enumerables are equal"
 
-    testProperty "SortByDecending" <| fun (NonEmptyArray (arr : int [])) ->
+    testProperty "SortByDecending" <| fun (NonEmptyArray (arr : int array)) ->
       let xs = NonEmptyEnumerable.FromEnumerable arr
       let sorted = Array.sortDescending arr
       let expected = xs.SortByDescending (fun i -> i)
@@ -112,14 +110,14 @@ let specs : Test =
       Expect.sequenceEqual sorted expected "the sorted enumerables are equal"
 
     testList "Partition" [
-      testProperty "Partition all true" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+      testProperty "Partition all true" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
         let enumerable = NonEmptyEnumerable.FromEnumerable arr
         let struct (whenTrue, whenFalse) = enumerable.Partition (fun _ -> true)
 
         Expect.isEmpty whenFalse "the whenFalse is empty"
         Expect.sequenceEqual whenTrue enumerable "the whenTrue and original enumerable are the same"
 
-      testProperty "Partition all false" <| fun (NonEmptyArray (arr : obj NonNull [])) ->
+      testProperty "Partition all false" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
         let enumerable = NonEmptyEnumerable.FromEnumerable arr
         let struct (whenTrue, whenFalse) = enumerable.Partition (fun _ -> false)
 
@@ -134,7 +132,7 @@ let specs : Test =
         Expect.sequenceEqual fiveAndGreater [5..10] "more than contains values that do not satisfy the predicate"
     ]
 
-    testProperty "Intersperse" <| fun ((NonNull (v: obj)), NonEmptyArray (enumerable: obj NonNull [])) ->
+    testProperty "Intersperse" <| fun ((NonNull (v: obj)), NonEmptyArray (enumerable: obj NonNull array)) ->
       let objs = fromNonNullToObjs enumerable
       let nee = NonEmptyEnumerable.FromEnumerable objs
       let interspersed = nee.Intersperse v
@@ -142,7 +140,7 @@ let specs : Test =
 
       Expect.sequenceEqual interspersed expected "the interspearsed enumerables are equal"
 
-    testProperty "Scan" <| fun (NonEmptyArray (arr : int [])) ->
+    testProperty "Scan" <| fun (NonEmptyArray (arr : int array)) ->
       let nee = NonEmptyEnumerable.FromEnumerable arr
       let scaned = nee.Scan(0, fun a b -> a + b)
       let expected = Array.scan (+) 0 arr
@@ -150,7 +148,7 @@ let specs : Test =
       Expect.sequenceEqual scaned expected "the scaned enumerables are equal"
 
     testList "Equality tests" [
-      testProperty "equality" <| fun (NonEmptyArray (enumerable: obj NonNull [])) ->
+      testProperty "equality" <| fun (NonEmptyArray (enumerable: obj NonNull array)) ->
         let first = nonEmptyFromNonNullObjs enumerable
         let second = nonEmptyFromNonNullObjs enumerable
 
@@ -159,7 +157,7 @@ let specs : Test =
         Expect.isFalse (first <> second) "two NonEmptyEnumerbales are not, not equal with the same values"
         Expect.equal first second "two NonEmptyEnumerbales are equal with the same values"
 
-      testProperty "inequality" <| fun (NonEmptyArray (enumerable1: obj NonNull []), NonEmptyArray (enumerable2: obj NonNull [])) ->
+      testProperty "inequality" <| fun (NonEmptyArray (enumerable1: obj NonNull array), NonEmptyArray (enumerable2: obj NonNull array)) ->
         let first = nonEmptyFromNonNullObjs enumerable1
         let second = nonEmptyFromNonNullObjs enumerable2
 
@@ -168,7 +166,7 @@ let specs : Test =
         Expect.isFalse (first = second) "two NonEmptyEnumerbales are not equal with different values"
         Expect.notEqual first second "two NonEmptyEnumerbales are not equal with different values"
 
-      testProperty "equality with null" <| fun (NonEmptyArray (enumerable: obj NonNull [])) ->
+      testProperty "equality with null" <| fun (NonEmptyArray (enumerable: obj NonNull array)) ->
         let xs = nonEmptyFromNonNullObjs enumerable
         Expect.isFalse (xs.Equals null) "a NonEmptyEnumerable never equals null"
         Expect.notEqual xs null "a NonEmptyEnumerable never equals null"
