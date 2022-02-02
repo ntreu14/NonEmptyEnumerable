@@ -15,8 +15,9 @@ namespace NonEmptyEnumerable
       _head = head ?? throw new ArgumentNullException(nameof(head));
       _tail = tail ?? throw new ArgumentNullException(nameof(tail));
     }
-    
-    public static NonEmptyEnumerable<T> Singleton(T head) => new NonEmptyEnumerable<T>(head, Enumerable.Empty<T>());
+
+    public static NonEmptyEnumerable<T> Singleton(T head) => 
+      new(head, Enumerable.Empty<T>());
 
     public static NonEmptyEnumerable<T> FromEnumerable(IEnumerable<T> enumerable)
     {
@@ -35,24 +36,25 @@ namespace NonEmptyEnumerable
 
     public IEnumerable<T> Tail() => _tail;
 
-    public NonEmptyEnumerable<TResult> Select<TResult>(Func<T, TResult> f) where TResult : notnull =>
-      new NonEmptyEnumerable<TResult>(f(_head), _tail.Select(f));
+    public NonEmptyEnumerable<TResult> Select<TResult>(Func<T, TResult> selector) where TResult : notnull =>
+      new(selector(_head), _tail.Select(selector));
 
-    public NonEmptyEnumerable<TResult> SelectMany<TResult>(Func<T, NonEmptyEnumerable<TResult>> f) where TResult : notnull
+    public NonEmptyEnumerable<TResult> SelectMany<TResult>(Func<T, NonEmptyEnumerable<TResult>> selector) 
+      where TResult : notnull
     {
-      var headResult = f(_head);
+      var headResult = selector(_head);
       var newHead = headResult.Head();
       var firstTail = headResult.Tail();
-      var secondTail = _tail.SelectMany(f);
+      var secondTail = _tail.SelectMany(selector);
 
       return new NonEmptyEnumerable<TResult>(newHead, firstTail.Concat(secondTail));
     }
 
-    public NonEmptyEnumerable<T> Concat(NonEmptyEnumerable<T> enumerable) =>
-      new NonEmptyEnumerable<T>(_head, _tail.Concat(enumerable));
+    public NonEmptyEnumerable<T> Concat(NonEmptyEnumerable<T> enumerable) => 
+      new(_head, _tail.Concat(enumerable));
 
-    public NonEmptyEnumerable<T> Cons(T newHead) =>
-      new NonEmptyEnumerable<T>(newHead, AsEnumerable());
+    public NonEmptyEnumerable<T> Cons(T newHead) => 
+      new(newHead, AsEnumerable());
 
     public NonEmptyEnumerable<T> Reverse() =>
       FromEnumerable(AsEnumerable().Reverse());
@@ -70,7 +72,7 @@ namespace NonEmptyEnumerable
     }
 
     public NonEmptyEnumerable<T> Intersperse(T value) =>
-      FromEnumerable(AsEnumerable().SelectMany(x => new [] { value, x }));
+      SelectMany(x => FromEnumerable(new[] { value, x }));
 
     public NonEmptyEnumerable<TState> Scan<TState>(TState state, Func<TState, T, TState> folder) where TState : notnull
     {
