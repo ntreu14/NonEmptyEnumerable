@@ -6,7 +6,7 @@ using System.Linq;
 namespace NonEmptyEnumerable
 {
   /// <summary>
-  /// An enumerable collection that cannot be empty.
+  /// An enumerable, read-only collection that cannot be empty.
   /// </summary>
   /// <typeparam name="T"></typeparam>
   public class NonEmptyEnumerable<T> : IReadOnlyCollection<T>, IEquatable<NonEmptyEnumerable<T>> 
@@ -118,7 +118,7 @@ namespace NonEmptyEnumerable
     /// Inverts the order of the elements in the <see cref="NonEmptyEnumerable{T}"/>.
     /// </summary>
     /// <returns>
-    ///   A <see cref="NonEmptyEnumerable{T}"/> whose elements are correspond to those of the original sequence in reverse order.
+    ///   A <see cref="NonEmptyEnumerable{T}"/> whose elements correspond to those of the original sequence in reverse order.
     /// </returns>
     public NonEmptyEnumerable<T> Reverse() =>
       FromEnumerable(AsEnumerable().Reverse());
@@ -140,7 +140,7 @@ namespace NonEmptyEnumerable
     /// <typeparam name="TKey"></typeparam>
     /// <param name="keySelector"></param>
     /// <returns>
-    ///   A <see cref="NonEmptyEnumerable{T}"/> whose elements are sorted in ascending order according to a key.
+    ///   A <see cref="NonEmptyEnumerable{T}"/> whose elements are sorted in descending order according to a key.
     /// </returns>
     public NonEmptyEnumerable<T> SortByDescending<TKey>(Func<T, TKey> keySelector) =>
       FromEnumerable(AsEnumerable().OrderByDescending(keySelector));
