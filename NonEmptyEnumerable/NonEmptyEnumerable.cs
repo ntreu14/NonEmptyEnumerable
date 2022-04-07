@@ -6,7 +6,7 @@ using System.Linq;
 namespace NonEmptyEnumerable
 {
   /// <summary>
-  /// An enumerable type that cannot be empty.
+  /// An enumerable collection that cannot be empty.
   /// </summary>
   /// <typeparam name="T"></typeparam>
   public class NonEmptyEnumerable<T> : IReadOnlyCollection<T>, IEquatable<NonEmptyEnumerable<T>> 
@@ -31,7 +31,6 @@ namespace NonEmptyEnumerable
     /// Create an instance of <see cref="NonEmptyEnumerable{T}" /> with a single element.
     /// </summary>
     /// <param name="head"></param>
-    /// <returns></returns>
     public static NonEmptyEnumerable<T> Singleton(T head) => 
       new(head, Enumerable.Empty<T>());
 
@@ -39,7 +38,6 @@ namespace NonEmptyEnumerable
     /// Create an instance of <see cref="NonEmptyEnumerable{T}" /> from an <see cref="IEnumerable{T}"/>.
     /// </summary>
     /// <param name="enumerable"></param>
-    /// <returns></returns>
     /// <exception cref="ArgumentException">
     ///   Occurs when <paramref name="enumerable" /> is null or empty.
     /// </exception>
@@ -57,15 +55,13 @@ namespace NonEmptyEnumerable
     }
 
     /// <summary>
-    /// Returns the first element in the enumerable.
+    /// Get the first element in the enumerable.
     /// </summary>
-    /// <returns></returns>
     public T Head() => _head;
 
     /// <summary>
-    /// Returns everything but the first element in the enumerable.
+    /// Get all elements after the first element in the enumerable.
     /// </summary>
-    /// <returns></returns>
     public IEnumerable<T> Tail() => _tail;
 
     /// <summary>
