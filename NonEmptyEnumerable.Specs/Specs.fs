@@ -11,7 +11,7 @@ let fromNonNullToObjs = Array.map (function NonNull x -> x)
 let nonEmptyFromNonNullObjs = NonEmptyEnumerable.FromEnumerable << fromNonNullToObjs
 
 [<Tests>]
-let specs : Test =
+let specs: Test =
   testList "NonEmptyEnumerable specs" [
 
     testList "constructing an NonEmptyEnumerable" [
@@ -34,7 +34,7 @@ let specs : Test =
         Expect.equal (singleton.Head ()) head "the head is equal to the head used to create it"
         Expect.isEmpty (singleton.Tail ()) "the tail is empty on a singleton"
 
-      testProperty "FromEnumerable not empty" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
+      testProperty "FromEnumerable not empty" <| fun (NonEmptyArray (arr: obj NonNull array)) ->
         let xs = NonEmptyEnumerable.FromEnumerable arr
 
         Expect.equal (xs.Head ()) (Array.head arr) "the heads are equal"
@@ -48,15 +48,19 @@ let specs : Test =
     ]
 
     testList "core functionality" [
-        testProperty "Head" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
+        testProperty "Head" <| fun (NonEmptyArray (arr: obj NonNull array)) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
           Expect.equal (xs.Head ()) (Array.head arr) "the heads are equal"
 
-        testProperty "Tail" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
+        testProperty "Tail" <| fun (NonEmptyArray (arr: obj NonNull array)) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
           Expect.sequenceEqual (xs.Tail ()) (Array.tail arr) "the tails are equal"
+
+        testProperty "Init" <| fun (NonEmptyArray (arr: obj NonNull array)) -> 
+          let xs = NonEmptyEnumerable.FromEnumerable arr
+          Expect.sequenceEqual (xs.Init ()) (arr.SkipLast 1) "inits are equal"
             
-        testProperty "Select" <| fun (NonEmptyArray (enumerable : int array)) ->
+        testProperty "Select" <| fun (NonEmptyArray (enumerable: int array)) ->
           let xs = NonEmptyEnumerable.FromEnumerable enumerable
           let add1 = (+) 1
 
@@ -65,7 +69,7 @@ let specs : Test =
 
           Expect.sequenceEqual mappedNonEmptyArray mappedArray "the mapped enumerables are the same"
 
-        testProperty "SelectMany" <| fun (NonEmptyArray (enumerable : PositiveInt array)) ->
+        testProperty "SelectMany" <| fun (NonEmptyArray (enumerable: PositiveInt array)) ->
           let justInts = Array.map (function PositiveInt i -> i) enumerable
               
           let xs = NonEmptyEnumerable.FromEnumerable justInts
@@ -76,7 +80,8 @@ let specs : Test =
 
           Expect.sequenceEqual collectedNonEmptyList collectedArray "the collected enumerables are the same"
 
-        testProperty "Concat" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
+        testProperty "Concat" <| fun (NonEmptyArray (arr: obj NonNull array)) ->
+          let xs = NonEmptyEnumerable.FromEnumerable arr
           let xs = NonEmptyEnumerable.FromEnumerable arr
           let appended = Array.append arr arr
           let nonEmptyConcated = xs.Concat xs
@@ -90,21 +95,21 @@ let specs : Test =
 
           Expect.sequenceEqual cons expected "the cons enumerables are equal"
 
-        testProperty "Reverse" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
+        testProperty "Reverse" <| fun (NonEmptyArray (arr: obj NonNull array)) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
           let reversed = Array.rev arr
           let expected = xs.Reverse ()
 
           Expect.sequenceEqual reversed expected "the reversed enumerables are equal"
 
-        testProperty "SortBy" <| fun (NonEmptyArray (arr : int array)) ->
+        testProperty "SortBy" <| fun (NonEmptyArray (arr: int array)) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
           let sorted = Array.sort arr
           let expected = xs.SortBy (fun i -> i)
 
           Expect.sequenceEqual sorted expected "the sorted enumerables are equal"
 
-        testProperty "SortByDecending" <| fun (NonEmptyArray (arr : int array)) ->
+        testProperty "SortByDecending" <| fun (NonEmptyArray (arr: int array)) ->
           let xs = NonEmptyEnumerable.FromEnumerable arr
           let sorted = Array.sortDescending arr
           let expected = xs.SortByDescending (fun i -> i)
@@ -112,14 +117,14 @@ let specs : Test =
           Expect.sequenceEqual sorted expected "the sorted enumerables are equal"
 
         testList "Partition" [
-          testProperty "Partition all true" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
+          testProperty "Partition all true" <| fun (NonEmptyArray (arr: obj NonNull array)) ->
             let enumerable = NonEmptyEnumerable.FromEnumerable arr
             let struct (whenTrue, whenFalse) = enumerable.Partition (fun _ -> true)
 
             Expect.isEmpty whenFalse "the whenFalse is empty"
             Expect.sequenceEqual whenTrue enumerable "the whenTrue and original enumerable are the same"
 
-          testProperty "Partition all false" <| fun (NonEmptyArray (arr : obj NonNull array)) ->
+          testProperty "Partition all false" <| fun (NonEmptyArray (arr: obj NonNull array)) ->
             let enumerable = NonEmptyEnumerable.FromEnumerable arr
             let struct (whenTrue, whenFalse) = enumerable.Partition (fun _ -> false)
 
@@ -142,7 +147,7 @@ let specs : Test =
 
           Expect.sequenceEqual interspersed expected "the interspearsed enumerables are equal"
 
-        testProperty "Scan" <| fun (NonEmptyArray (arr : int array)) ->
+        testProperty "Scan" <| fun (NonEmptyArray (arr: int array)) ->
           let nee = NonEmptyEnumerable.FromEnumerable arr
           let scaned = nee.Scan(0, fun a b -> a + b)
           let expected = Array.scan (+) 0 arr
