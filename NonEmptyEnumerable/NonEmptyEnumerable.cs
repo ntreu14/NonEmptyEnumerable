@@ -65,6 +65,16 @@ namespace NonEmptyEnumerable
     public IEnumerable<T> Tail() => _tail;
 
     /// <summary>
+    /// Get all elements except for the last element in the enumerable.
+    /// </summary>
+    /// <returns>
+    /// A new enumerable collection that contains all the elements from the original <see cref="NonEmptyEnumerable{T}"/>
+    /// except for the last one.
+    /// </returns>
+    public IEnumerable<T> Init() => 
+      AsEnumerable().SkipLast(1);
+
+    /// <summary>
     /// Projects each element of a sequence into a new form. 
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
