@@ -57,11 +57,17 @@ namespace NonEmptyEnumerable
     /// <summary>
     /// Get the first element in the enumerable.
     /// </summary>
+    /// <returns>
+    /// The first element in the <see cref="NonEmptyEnumerable{T}"/>.
+    /// </returns>
     public T Head() => _head;
 
     /// <summary>
     /// Get all elements after the first element in the enumerable.
     /// </summary>
+    /// <returns>
+    /// Every element except the head in the <see cref="NonEmptyEnumerable{T}"/>.
+    /// </returns>
     public IEnumerable<T> Tail() => _tail;
 
     /// <summary>
@@ -173,6 +179,9 @@ namespace NonEmptyEnumerable
     /// Alternates elements of the list with copies of the provided <paramref name="value"/>.
     /// </summary>
     /// <param name="value"></param>
+    /// <returns>
+    /// A new <see cref="NonEmptyEnumerable{T}"/> alternating <paramref name="value"/> with the original elements.
+    /// </returns>
     public NonEmptyEnumerable<T> Intersperse(T value) =>
       SelectMany(x => FromEnumerable(new[] { value, x }));
 
@@ -208,6 +217,8 @@ namespace NonEmptyEnumerable
     /// Return the current number of elements in the <see cref="NonEmptyEnumerable{T}"/>.
     /// </summary>
     public int Count => _tail.Count() + 1;
+
+    public bool IsReadOnly => true;
 
     public static bool operator ==(NonEmptyEnumerable<T> first, NonEmptyEnumerable<T> second) =>
       Equals(first, second);

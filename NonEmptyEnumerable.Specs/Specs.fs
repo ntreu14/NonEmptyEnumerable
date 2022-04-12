@@ -145,14 +145,14 @@ let specs: Test =
           let interspersed = nee.Intersperse v
           let expected = Array.collect (fun s -> [|v; s|]) objs
 
-          Expect.sequenceEqual interspersed expected "the interspearsed enumerables are equal"
+          Expect.sequenceEqual interspersed expected "the interspersed enumerables are equal"
 
         testProperty "Scan" <| fun (NonEmptyArray (arr: int array)) ->
           let nee = NonEmptyEnumerable.FromEnumerable arr
           let scaned = nee.Scan(0, fun a b -> a + b)
           let expected = Array.scan (+) 0 arr
 
-          Expect.sequenceEqual scaned expected "the scaned enumerables are equal"
+          Expect.sequenceEqual scaned expected "the scanned enumerables are equal"
     ]
 
     testList "Equality tests" [
