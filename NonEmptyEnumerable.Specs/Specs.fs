@@ -15,7 +15,6 @@ let specs: Test =
   testList "NonEmptyEnumerable specs" [
 
     testList "constructing an NonEmptyEnumerable" [
-          
       testCase "with both arguments as null" <| fun _ ->
         throwsT<ArgumentNullException> (fun () -> NonEmptyEnumerable(null, null) |> ignore) "throws an ArgumentNullException"
 
@@ -41,7 +40,7 @@ let specs: Test =
         Expect.sequenceEqual (xs.Tail ()) (Array.tail arr) "the tails are equal"
 
       testCase "FromEnumerable with null" <| fun _ -> 
-          throwsT<ArgumentException> (fun () -> NonEmptyEnumerable.FromEnumerable null |> ignore) "throws an ArgumentException"
+        throwsT<ArgumentException> (fun () -> NonEmptyEnumerable.FromEnumerable null |> ignore) "throws an ArgumentException"
 
       testCase "FromEnumerable with an empty enumerable" <| fun _ -> 
         throwsT<ArgumentException> (fun () -> NonEmptyEnumerable.FromEnumerable (Enumerable.Empty<obj> ()) |> ignore) "throws an ArgumentException"  
@@ -71,17 +70,14 @@ let specs: Test =
 
         testProperty "SelectMany" <| fun (NonEmptyArray (enumerable: PositiveInt array)) ->
           let justInts = Array.map (function PositiveInt i -> i) enumerable
-              
           let xs = NonEmptyEnumerable.FromEnumerable justInts
-          let toManyInts n = [|0..n|] |> NonEmptyEnumerable.FromEnumerable
 
           let collectedArray = justInts |> Array.collect (fun n -> [|0..n|])
-          let collectedNonEmptyList = xs.SelectMany toManyInts
+          let collectedNonEmptyList = xs.SelectMany (fun n -> [0..n] |> NonEmptyEnumerable.FromEnumerable)
 
           Expect.sequenceEqual collectedNonEmptyList collectedArray "the collected enumerables are the same"
 
         testProperty "Concat" <| fun (NonEmptyArray (arr: obj NonNull array)) ->
-          let xs = NonEmptyEnumerable.FromEnumerable arr
           let xs = NonEmptyEnumerable.FromEnumerable arr
           let appended = Array.append arr arr
           let nonEmptyConcated = xs.Concat xs
