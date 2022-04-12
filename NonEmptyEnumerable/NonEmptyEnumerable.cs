@@ -6,7 +6,7 @@ using System.Linq;
 namespace NonEmptyEnumerable
 {
   /// <summary>
-  /// An enumerable, read-only collection that cannot be empty.
+  /// An enumerable, read-only collection which always has at least one element.
   /// </summary>
   /// <typeparam name="T"></typeparam>
   public class NonEmptyEnumerable<T> : IReadOnlyCollection<T>, IEquatable<NonEmptyEnumerable<T>> 
