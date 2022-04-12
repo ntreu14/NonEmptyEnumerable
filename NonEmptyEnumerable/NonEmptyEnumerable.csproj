@@ -11,15 +11,21 @@
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/ntreu14/NonEmptyEnumerable</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Implement IEquatable&lt;T&gt; for NonEmptyEnumerable.</PackageReleaseNotes>
+    <PackageReleaseNotes>Minor updates to class summary</PackageReleaseNotes>
     <Description>A simple NonEmptyEnumerable type for .NET</Description>
-    <Version>2.1.0</Version>
+    <Version>3.0.1</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
